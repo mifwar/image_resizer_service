@@ -39,4 +39,7 @@ COPY ./CMakeLists.txt /app
 
 WORKDIR /app/build
 
-RUN cmake .. && make
+RUN mkdir build && \
+    cd build && \
+    cmake .. && \
+    make -j4 && \
