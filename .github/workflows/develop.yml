@@ -1,0 +1,32 @@
+name: dependency download
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ libboost-all-dev libssl-dev
+
+    - name: Clone and build libasyik
+      run: |
+        git clone https://github.com/okyfirmansyah/libasyik
+        cd libasyik
+        git submodule update --init --recursive
+        mkdir build
+        cd build
+        cmake -DLIBASYIK_ENABLE_SOCI=OFF ..
+        make -j4
