@@ -1,0 +1,23 @@
+name: Unit testing
+
+on:
+  push:
+    branches:
+      - experimental
+  pull_request:
+    branches:
+      - experimental
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: docker build -t image_resizer .
+
+    - name: Run Tests
+      run: docker run -v ${PWD}:/workspace image_resizer /bin/sh -c "cd /workspace/build && ./tests/image_resizer_test -s"
