@@ -9,17 +9,15 @@ find_package(Boost COMPONENTS context fiber date_time url REQUIRED)
 find_package(libasyik)
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(JSONCPP jsoncpp)
 
 set(COMMON_INCLUDE_DIRS include ${OpenCV_INCLUDE_DIRS})
 set(COMMON_LIBRARIES
     ${OpenCV_LIBS}
     Boost::fiber
     Boost::context
-    ${JSONCPP_LINK_LIBRARIES}
     Threads::Threads
-    OpenSSL::SSL)
+    OpenSSL::SSL
+    jsoncpp_lib)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
@@ -35,5 +33,6 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} image_resizer_lib)
 
 add_subdirectory(external/catch2)
+add_subdirectory(external/jsoncpp)
 enable_testing ()
 add_subdirectory(tests)
