@@ -22,4 +22,4 @@ jobs:
       run: docker build -t image_resizer .
 
     - name: Run Tests
-      run: docker run -v ${PWD}:/workspace image_resizer /bin/sh -c "cd /workspace/build && ./tests/image_resizer_test -s"
+      run: docker run -v ${PWD}:/app image_resizer /bin/sh -c "cd /app/build && ./tests/image_resizer_test -s"
