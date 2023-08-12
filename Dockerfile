@@ -37,9 +37,7 @@ COPY ./external /app/external
 COPY ./tests /app/tests
 COPY ./CMakeLists.txt /app
 
-WORKDIR /app
-
-RUN mkdir build && \
-    cd build && \
-    cmake .. && \
-    make -j4 
+RUN mkdir build
+WORKDIR /app/build
+RUN cmake ..
+RUN make -j4
