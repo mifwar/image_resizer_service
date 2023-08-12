@@ -9,17 +9,37 @@ on:
       - develop
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Setup Environment and Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake g++ libboost-all-dev libssl-dev
+        sudo apt-get -y update
+        sudo apt-get -y upgrade
+        sudo apt-get -y dist-upgrade
+        sudo apt-get -y autoremove
+        sudo apt-get install -y build-essential gdb wget git libssl-dev clang-format cmake libperlio-gzip-perl libjson-perl
+
+    - name: Install and Build Boost
+      run: |
+        mkdir ~/temp
+        cd ~/temp
+        wget -q https://sourceforge.net/projects/boost/files/boost/1.81.0/boost_1_81_0.tar.gz
+        tar -zxf boost_1_81_0.tar.gz
+        cd boost_1_81_0
+        ./bootstrap.sh
+        ./b2 cxxflags="-std=c++11" --reconfigure --with-fiber --with-context --with-atomic --with-date_time --with-filesystem --with-url install
+        cd ~/temp
+        git clone -b v1.15 https://github.com/linux-test-project/lcov.git
+        cd lcov
+        make install
+        rm -rf ~/temp/*
+        sudo apt-get autoremove -y
+        sudo apt-get clean -y
 
     - name: Clone and build libasyik
       run: |
