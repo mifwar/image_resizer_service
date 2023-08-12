@@ -31,8 +31,6 @@ RUN git clone https://github.com/okyfirmansyah/libasyik && \
 
 RUN apt-get update && apt-get install -y libopencv-dev
 
-RUN git submodule update --init --recursive
-
 COPY ./src /app/src
 COPY ./include /app/include
 COPY ./external /app/external
