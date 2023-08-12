@@ -31,13 +31,17 @@ RUN git clone https://github.com/okyfirmansyah/libasyik && \
 
 RUN apt-get update && apt-get install -y libopencv-dev
 
+RUN git submodule update --init --recursive
+
 COPY ./src /app/src
 COPY ./include /app/include
 COPY ./external /app/external
 COPY ./tests /app/tests
 COPY ./CMakeLists.txt /app
 
-RUN mkdir build
-WORKDIR /app/build
-RUN cmake ..
-RUN make -j4
+WORKDIR /app
+
+RUN mkdir build && \
+    cd build && \
+    cmake .. && \
+    make -j4 
