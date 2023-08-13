@@ -1,4 +1,4 @@
-name: dependency download
+name: Unit testing
 
 on:
   push:
@@ -15,38 +15,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+          submodules: recursive
 
-    - name: Setup Environment and Install Dependencies
-      run: |
-        sudo apt-get -y update
-        sudo apt-get -y upgrade
-        sudo apt-get -y dist-upgrade
-        sudo apt-get -y autoremove
-        sudo apt-get install -y build-essential gdb wget git libssl-dev clang-format cmake libperlio-gzip-perl libjson-perl
+    - name: Build Docker Image
+      run: docker build -t image_resizer .
 
-    - name: Install and Build Boost
-      run: |
-        mkdir ~/temp
-        cd ~/temp
-        wget -q https://sourceforge.net/projects/boost/files/boost/1.81.0/boost_1_81_0.tar.gz
-        tar -zxf boost_1_81_0.tar.gz
-        cd boost_1_81_0
-        ./bootstrap.sh
-        ./b2 cxxflags="-std=c++11" --reconfigure --with-fiber --with-context --with-atomic --with-date_time --with-filesystem --with-url install
-        cd ~/temp
-        git clone -b v1.15 https://github.com/linux-test-project/lcov.git
-        cd lcov
-        make install
-        rm -rf ~/temp/*
-        sudo apt-get autoremove -y
-        sudo apt-get clean -y
-
-    - name: Clone and build libasyik
-      run: |
-        git clone https://github.com/okyfirmansyah/libasyik
-        cd libasyik
-        git submodule update --init --recursive
-        mkdir build
-        cd build
-        cmake -DLIBASYIK_ENABLE_SOCI=OFF ..
-        make -j4
+    - name: Run Tests
+      uses: addnab/docker-run-action@v3
+      with:
+        image: image_resizer:latest
+        shell: bash
+        run: |
+          cd /app/build
+          ./tests/image_resizer_test -s
